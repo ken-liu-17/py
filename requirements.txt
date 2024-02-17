@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+pandas
+jupyterlab
+yfinance
+dash
+Flask
+apache-airflow
