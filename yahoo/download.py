@@ -14,7 +14,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 today = datetime.today().strftime('%Y-%m-%d')
 csv_path = '../data/yahoo/'
 
-def download(symbol, start_date, end_date = None):
+def download_one(symbol, start_date, end_date = None):
 #    data = yf.download('AAPL', '2014-01-01', '2024-02-16')
     if end_date is None:
         df = yf.download(symbol, start_date)
@@ -26,7 +26,7 @@ def download(symbol, start_date, end_date = None):
 def download_quotes(symbols, start_date, end_date = None):
     count = 0
     for symbol in symbols:
-        download(symbol, start_date, end_date)
+        download_one(symbol, start_date, end_date)
         count += 1
         print(symbol + ' done ' + str(count))
         
