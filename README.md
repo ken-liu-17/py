@@ -1,1 +1,2 @@
-# py
+# Python and Machine Learning projects
+
