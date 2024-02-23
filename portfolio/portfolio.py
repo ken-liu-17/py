@@ -30,15 +30,13 @@ class Portfolio:
     def build(self):
         df_price = self._alpha.df_price
         df_price_diff = self._alpha.df_price_diff
+        df_price_diff.dropna()
         #df_price_ret = self._alpha.df_ret
         N = len(df_price.columns)
         cash_per_stock = self._cash / N
         for date in df_price_diff.index:
-            diffs = df_price_diff.loc[date]
-            diffs = np.where(diffs.isna(), 0, diffs)
-            diffs = np.where(diffs > 0., 1., diffs)
-            diffs = np.where(diffs < 0., -1., diffs)
-            self._portfolio.loc[date] = df_price.loc[date].apply(lambda x : floor(cash_per_stock / x)) * diffs
+            self._portfolio.loc[date] = df_price.loc[date].apply(lambda x : floor(cash_per_stock / x)) \
+                * np.where(df_price_diff.loc[date] >= 0., 1., -1.)
             self._pnL.loc[date] = np.sum(self._portfolio.loc[date] * df_price_diff.loc[date])
 
     def sharpeRatio(self):
