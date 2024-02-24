@@ -8,11 +8,12 @@ class Portfolio:
     def __init__(self, cash, alpha):
         self._cash = cash
         self._alpha = alpha
-        self._portfolio = pd.DataFrame(dtype=float, columns=self._alpha.df_price.columns, index=self._alpha.df_price.index)
-        self._pnL = pd.DataFrame(dtype=float, columns=['pnL'], index=self._alpha.df_price.index)
+        self._portfolio = pd.DataFrame(dtype=float, columns=self._alpha.df_adj_close.columns, index=self._alpha.df_adj_close.index)
+        self._pnL = pd.DataFrame(dtype=float, columns=['pnL'], index=self._alpha.df_adj_close.index)
     
     @property
     def portfolio(self):
+    #  shares for each stock
         return self._portfolio
        
     @property
@@ -27,17 +28,23 @@ class Portfolio:
     def pnL(self):
         return self._pnL
 
-    def build(self):
-        df_price = self._alpha.df_price
-        df_price_diff = self._alpha.df_price_diff
-        df_price_diff.dropna()
-        #df_price_ret = self._alpha.df_ret
-        N = len(df_price.columns)
+    def build_by_prev_adj_close(self):
+        self._alpha.df_adj_close_diff.dropna()
+        N = len(self._alpha.df_adj_close.columns)
         cash_per_stock = self._cash / N
-        for date in df_price_diff.index:
-            self._portfolio.loc[date] = df_price.loc[date].apply(lambda x : floor(cash_per_stock / x)) \
-                * np.where(df_price_diff.loc[date] >= 0., 1., -1.)
-            self._pnL.loc[date] = np.sum(self._portfolio.loc[date] * df_price_diff.loc[date])
+        for date in self._alpha.df_adj_close_diff.index:
+            self._portfolio.loc[date] = self._alpha.df_adj_close.loc[date].apply(lambda x : floor(cash_per_stock / x)) \
+                * np.where(self._alpha.df_adj_close_diff.loc[date] >= 0., 1., -1.)
+            self._pnL.loc[date] = np.sum(self._portfolio.loc[date] * self._alpha.df_adj_close_diff.loc[date])
+
+    def build_by_open(self):
+        self._alpha.df_adj_close_diff.dropna()
+        N = len(self._alpha.df_adj_close.columns)
+        cash_per_stock = self._cash / N
+        for date in self._alpha.df_open.index:
+            self._portfolio.loc[date] = self._alpha.df_open.loc[date].apply(lambda x : floor(cash_per_stock / x)) \
+                * np.where(self._alpha.df_adj_close_diff.loc[date] >= 0., 1., -1.)
+            self._pnL.loc[date] = np.sum(self._portfolio.loc[date] * (self._alpha.df_adj_close.loc[date] - self._alpha.df_open.loc[date]))
 
     def sharpeRatio(self):
         self._portfolio_rets = self._pnL.apply(lambda x : x / self._cash)
@@ -51,9 +58,16 @@ class Portfolio:
 
 if __name__ == '__main__':
     print('Alpha...')
-    alpha = Alpha('../data/adj_close_2023.csv')
+    alpha = Alpha()
     alpha.generate() 
     print('Portfolio...')
     portfolio = Portfolio(float(1e8), alpha)
-    portfolio.build()
+    print('build by previous adj close ...')
+    portfolio.build_by_prev_adj_close()
+    print(portfolio.pnL)
+    print('sharpe ratio=', portfolio.sharpeRatio())
+
+    print('build by todays open ...')
+    portfolio.build_by_open()
+    print(portfolio.pnL)
     print('sharpe ratio=', portfolio.sharpeRatio())

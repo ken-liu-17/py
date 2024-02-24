@@ -35,7 +35,23 @@ def read_sp500_symbols(file_path='../data/SP500_symbols.csv'):
     symbols = list(sp500_df['Symbol'])
     return symbols
 
+def download_stocks_to_one_dataframe(stocks, start_date='2014-01-01'):
+    df = yf.download(stocks, start_date)
+    df.to_csv('../data/tech_stocks.csv')
+    # Adj Close
+    df_adj_close = df['Adj Close']
+    df_adj_close_2023 = df_adj_close.loc[(df_adj_close.index >= '2023-01-01') & (df_adj_close.index < '2024-01-01')]
+    df_adj_close_2023.to_csv('../data/tech_stocks_adj_close_2023.csv')
+    # Open
+    df_open = df['Open']
+    df_open_2023 = df_open.loc[(df_open.index >= '2023-01-01') & (df_open.index < '2024-01-01')]
+    df_open_2023.to_csv('../data/tech_stocks_open_2023.csv')
+        
+    
 if __name__ == '__main__':
     print("download...")    
-    symbols = read_sp500_symbols()
-    download_quotes(symbols, '2014-01-01')
+    #symbols = read_sp500_symbols()
+    #download_quotes(symbols, '2014-01-01')
+    tech_stocks = ['AAPL', 'AMD', 'AMZN', 'BABA', 'BIDU', 'GOOG', 'IBM', 'JD', 'META', 'MSFT', 'NVDA', 'ORCL', 'PDD', 'UBER']
+    download_stocks_to_one_dataframe(tech_stocks)
+
