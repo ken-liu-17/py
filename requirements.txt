@@ -7,3 +7,5 @@ yfinance
 dash
 Flask
 apache-airflow
+torch
+torchvision
