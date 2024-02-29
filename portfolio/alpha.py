@@ -34,7 +34,6 @@ class Alpha:
     def generate(self):
         self._df_adj_close_diff = self._df_adj_close.diff()
         self._df_adj_close_ret = self._df_adj_close.pct_change() * 252.
-    
 
 if __name__ == '__main__':
     print('alpha ...')

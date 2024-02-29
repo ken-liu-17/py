@@ -28,7 +28,7 @@ class Portfolio:
     def pnL(self):
         return self._pnL
 
-    def build_by_prev_adj_close(self):
+    def buildByPrevAdjClose(self):
         self._alpha.df_adj_close_diff.dropna()
         N = len(self._alpha.df_adj_close.columns)
         cash_per_stock = self._cash / N
@@ -37,7 +37,7 @@ class Portfolio:
                 * np.where(self._alpha.df_adj_close_diff.loc[date] >= 0., 1., -1.)
             self._pnL.loc[date] = np.sum(self._portfolio.loc[date] * self._alpha.df_adj_close_diff.loc[date])
 
-    def build_by_open(self):
+    def buildByOpen(self):
         self._alpha.df_adj_close_diff.dropna()
         N = len(self._alpha.df_adj_close.columns)
         cash_per_stock = self._cash / N
@@ -49,8 +49,7 @@ class Portfolio:
     def sharpeRatio(self):
         self._portfolio_rets = self._pnL.apply(lambda x : x / self._cash)
         mean_ret = self._portfolio_rets.mean()
-        print(mean_ret)
-        print(mean_ret, self._portfolio_rets.std()['pnL'])
+        print('pnL mean daily return=', self._portfolio_rets.std()['pnL'])
         return sqrt(252.) * mean_ret['pnL'] / self._portfolio_rets.std()['pnL']
 
     def plot(self):
@@ -63,11 +62,11 @@ if __name__ == '__main__':
     print('Portfolio...')
     portfolio = Portfolio(float(1e8), alpha)
     print('build by previous adj close ...')
-    portfolio.build_by_prev_adj_close()
+    portfolio.buildByPrevAdjClose()
     print(portfolio.pnL)
     print('sharpe ratio=', portfolio.sharpeRatio())
 
     print('build by todays open ...')
-    portfolio.build_by_open()
+    portfolio.buildByOpen()
     print(portfolio.pnL)
     print('sharpe ratio=', portfolio.sharpeRatio())

@@ -8,5 +8,6 @@ dash
 Flask
 apache-airflow
 numba
-torch
 scikit-learn
+torch
+torchvision
