@@ -7,3 +7,6 @@ yfinance
 dash
 Flask
 apache-airflow
+numba
+torch
+scikit-learn
