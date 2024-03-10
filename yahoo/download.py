@@ -78,10 +78,10 @@ def download_EOD_to_one_dataframe(stocks, start_date='2014-01-01'):
 if __name__ == '__main__':
     print("download...")    
     symbols = create_symbols()
-    #download_EOD(symbols, '2014-01-01')
-    #download_bar(symbols, period='7D', interval='1m')
-    #download_bar(symbols, period='60D', interval='2m')
-    #download_bar(symbols, period='60D', interval='5m')
+    download_EOD(symbols, '2014-01-01')
+    download_bar(symbols, period='7D', interval='1m')
+    download_bar(symbols, period='60D', interval='2m')
+    download_bar(symbols, period='60D', interval='5m')
     download_bar(symbols, period='60D', interval='15m')
     download_bar(symbols, period='60D', interval='30m')
 
