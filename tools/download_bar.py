@@ -53,8 +53,8 @@ class DownloadBar(Download):
 
 if __name__ == '__main__':
     print("download bar data ...")
-    start_date = '2024-03-11'
-    end_date = '2024-03-16'
+    start_date = '2024-03-18'
+    end_date = '2024-03-23'
     #1m
     download_bar_1m = DownloadBar(start_date=start_date, end_date=end_date, interval='1m')
     download_bar_1m.download()
